@@ -1,0 +1,207 @@
+:root {
+  --time-tran: 0.65s;
+  --color-light-blue: #a9dcfd;
+  --color-white: #fefefe;
+  --color-blue-white: #cbeafe;
+  --color-light-white: #d5eefe;
+  --color-grey: rgba(55, 55, 55, 0.5);
+  --color-black-gray: #373737;
+  --color-blue: #09f;
+  --color-shadow: rgba(255, 255, 255, 0.3);
+  --color-black-shadow: #0000000d;
+}
+body {
+  font-family: Poppins;
+  background-color: black;
+}
+button:hover {
+  box-shadow: 0px 3px 20px 0px var(--color-blue);
+  transition: 0.1s;
+}
+.head {
+  width: 423px;
+  margin: 0 auto;
+  padding-bottom: 46px;
+  border-radius: 40px;
+  background: var(--color-white);
+}
+.container {
+  width: 355px;
+  padding: 52px 0 58px;
+  margin: 0 auto;
+}
+.head-theme {
+  position: relative;
+  display: flex;
+  width: 122px;
+  height: 44px;
+  justify-content: space-between;
+  padding: 7px 15px;
+  margin: 0 auto 141px;
+  z-index: 2;
+  background-color: var(--color-light-blue);
+  border-radius: 40px;
+}
+.head-theme-light {
+  width: 29.737px;
+  height: 29.737px;
+  z-index: 4;
+}
+.head-theme-night {
+  width: 29.737px;
+  height: 29.737px;
+  z-index: 4;
+}
+.head-theme-light {
+  width: 29.737px;
+  height: 29.737px;
+  z-index: 4;
+}
+.head-theme-change {
+  display: none;
+  opacity: 0;
+}
+.head-theme-change:checked + .head-theme-check {
+  left: 54px;
+}
+.head-theme-check {
+  position: absolute;
+  width: 68px;
+  height: 44px;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  background-color: var(--color-blue-white);
+  border-radius: 40px;
+  transition: var(--time-tran);
+}
+.head-history {
+  margin-bottom: 8px;
+  text-align: end;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--color-grey);
+}
+.head-flex_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.head-result {
+  flex-grow: 1;
+  text-align: end;
+  color: var(--color-black-gray);
+  font-size: 40px;
+  font-weight: 600;
+}
+.interface {
+  width: 423px;
+  margin: 0 auto;
+  margin-top: -80px;
+  background-color: var(--color-light-blue);
+  border-radius: 30px;
+}
+.interface-container {
+  display: flex;
+  gap: 25px;
+}
+.interface-list {
+  display: grid;
+  row-gap: 20px;
+  column-gap: 25px;
+  grid-template-areas:
+    "AC AC AC"
+    "one two three"
+    "four five six"
+    "seven eight nine"
+    "point bagel bagelTwice";
+}
+.interface-list > .interface-list-item:nth-child(1) {
+  grid-area: AC;
+}
+.interface-list > .interface-list-item:nth-child(2) {
+  grid-area: one;
+}
+.interface-list > .interface-list-item:nth-child(3) {
+  grid-area: two;
+}
+.interface-list > .interface-list-item:nth-child(4) {
+  grid-area: three;
+}
+.interface-list > .interface-list-item:nth-child(5) {
+  grid-area: four;
+}
+.interface-list > .interface-list-item:nth-child(6) {
+  grid-area: five;
+}
+.interface-list > .interface-list-item:nth-child(7) {
+  grid-area: six;
+}
+.interface-list > .interface-list-item:nth-child(8) {
+  grid-area: seven;
+}
+.interface-list > .interface-list-item:nth-child(9) {
+  grid-area: eight;
+}
+.interface-list > .interface-list-item:nth-child(10) {
+  grid-area: nine;
+}
+.interface-list > .interface-list-item:nth-child(11) {
+  grid-area: point;
+}
+.interface-list > .interface-list-item:nth-child(12) {
+  grid-area: bagel;
+}
+.interface-list > .interface-list-item:nth-child(13) {
+  grid-area: bagelTwice;
+}
+.interface-list-item {
+  display: block;
+  width: 70px;
+  height: 70px;
+  justify-content: center;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-black-gray);
+  background-color: var(--color-shadow);
+  border-radius: 50px;
+  box-shadow: 0px 3px 15px 0px var(--color-black-shadow);
+}
+.interface-list-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-black-gray);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 50px;
+}
+.interface-list_operation > .interface-list-item {
+  background-color: transparent;
+  margin-bottom: 20px;
+  box-shadow: 0px 0px 0px 0px transparent;
+}
+.interface-list_operation {
+  width: 70px;
+  height: 430px;
+  border-radius: 40px;
+  background-color: var(--color-shadow);
+  box-shadow: 0px 3px 15px 0px #0000000d;
+}
+.interface-list_operation > .interface-list-item:last-of-type {
+  margin-bottom: 0;
+  background-color: var(--color-light-white);
+  box-shadow: 0px 3px 15px 0px var(--color-black-shadow);
+}
+
+.head-equals {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  color: #373737;
+}
