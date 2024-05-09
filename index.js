@@ -1,4 +1,5 @@
 let enterStr = "";
+let indexNow = 0;
 const root = {
   interfaceEl: document.querySelector(".interface"),
   fieldResult: document.querySelector(".head-result"),
@@ -23,6 +24,7 @@ function enterInResult(event) {
     root.fieldResult.innerHTML = "0";
     root.fieldHistory.innerHTML = "";
     enterStr = "";
+    indexNow = 0;
     hiddenEquals();
     return;
   }
@@ -35,22 +37,54 @@ function enterInResult(event) {
     if (enterStr.includes("÷")) {
       processingStr = processingStr.replace("÷", "/");
     }
-    result = String(eval(processingStr))
-      .split("")
-      .filter((item, index) => index < 12)
-      .join("");
+    result = eval(processingStr).toFixed(10);
+    // if (result[result.length - 1] === 0) {
+    //   result
+    //     .split("")
+    //     .filter((item, index) => enterStr[enterStr - index - 1] < 12)
+    //     .join("");
+    // }
     root.equals.removeAttribute("hidden");
     root.fieldHistory.innerHTML = enterStr; // вивід історії
     root.fieldResult.innerHTML = result;
     enterStr = result;
+    indexNow = enterStr.length - 1;
+    console.log(indexNow);
     return;
   }
   if (element === ".") {
+    if (checked(enterStr[indexNow - 1]) || enterStr.length === 0) {
+      enterStr += "0";
+      indexNow += 1;
+    } else if (findPointInNumb(indexNow)) {
+      return;
+    }
+  }
+  if (checked(element)) {
+    console.log(indexNow);
+    if (enterStr[indexNow - 1] === ".") {
+      enterStr = enterStr.split("");
+      enterStr.pop();
+      enterStr = enterStr.join("");
+      indexNow -= 1;
+    }
   }
   hiddenEquals();
+  indexNow += 1;
   enterStr += element;
   root.equals.setAttribute("hidden", "");
   root.fieldResult.innerHTML = enterStr;
+}
+
+function findPointInNumb(indexNow) {
+  for (let i = 1; !checked(enterStr[indexNow - i]); i += 1) {
+    if (indexNow - i === -1) {
+      break;
+    }
+    if (enterStr[indexNow - i] === ".") {
+      return true;
+    }
+  }
 }
 
 function hiddenEquals() {
@@ -65,7 +99,7 @@ function checked(elem) {
       return true;
     case "-":
       return true;
-    case "*":
+    case "×":
       return true;
     case "÷":
       return true;
