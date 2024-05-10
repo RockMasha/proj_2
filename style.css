@@ -90,11 +90,14 @@ button:hover {
   align-items: center;
 }
 .head-result {
+  display: flex;
+  flex-wrap: nowrap;
   flex-grow: 1;
   text-align: end;
   color: var(--color-black-gray);
   font-size: 40px;
   font-weight: 600;
+  flex-direction: row-reverse;
   overflow: hidden;
 }
 .interface {
@@ -202,7 +205,7 @@ button:hover {
   box-shadow: 0px 3px 15px 0px var(--color-black-shadow);
 }
 
-.head-equals[hidden]{
+.head-equals[hidden] {
   overflow: hidden;
 }
 
