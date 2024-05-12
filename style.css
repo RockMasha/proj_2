@@ -9,10 +9,11 @@
   --color-blue: #09f;
   --color-shadow: rgba(255, 255, 255, 0.3);
   --color-black-shadow: #0000000d;
+  --color-absolute-black: #000
 }
 body {
   font-family: Poppins;
-  background-color: black;
+  background-color:  var(--color-absolute-black);
 }
 button:hover {
   box-shadow: 0px 3px 20px 0px var(--color-blue);
@@ -112,17 +113,19 @@ button:hover {
   gap: 25px;
 }
 .interface-list {
-  display: grid;
+  /* display: grid; */
+  display: flex;
+  flex-wrap: wrap;
   row-gap: 20px;
   column-gap: 25px;
-  grid-template-areas:
+  /* grid-template-areas:
     "AC AC AC"
     "one two three"
     "four five six"
     "seven eight nine"
-    "point bagel bagelTwice";
+    "point bagel bagelTwice"; */
 }
-.interface-list > .interface-list-item:nth-child(1) {
+/* .interface-list > .interface-list-item:nth-child(1) {
   grid-area: AC;
 }
 .interface-list > .interface-list-item:nth-child(2) {
@@ -160,7 +163,7 @@ button:hover {
 }
 .interface-list > .interface-list-item:nth-child(13) {
   grid-area: bagelTwice;
-}
+} */
 .interface-list-item {
   display: block;
   width: 70px;

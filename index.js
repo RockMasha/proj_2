@@ -108,7 +108,6 @@ function pressEquals() {
   changeOperation("×", "*");
   changeOperation("÷", "/");
   changeOperation("\u1C7C", "-");
-  console.log(enterStr);
   result = eval(processingStr).toFixed(10);
   result = redactResult(result);
   console.log();
