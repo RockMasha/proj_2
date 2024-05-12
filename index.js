@@ -1,5 +1,6 @@
 let enterStr = "";
 let indexNow = -1;
+let processingStr;
 const root = {
   interfaceEl: document.querySelector(".interface"),
   fieldResult: document.querySelector(".head-result"),
@@ -13,10 +14,7 @@ function enterInResult(event) {
     return;
   }
   const element = event.target?.dataset?.value;
-  if (
-    (checked(element) && checked(enterStr[enterStr.length - 1])) ||
-    (checked(element) && enterStr === "")
-  ) {
+  if (checked(element) && enterStr === "") {
     return;
   }
 
@@ -33,13 +31,20 @@ function enterInResult(event) {
       }
       return;
     case "00":
-      pressDoubleZero();
+      if (pressDoubleZero()) {
+        break;
+      }
+      return;
+    case "0":
+      if (!pressZero()) {
+        return;
+      }
       break;
   }
   if (checked(element)) {
     pressOperation();
   }
-
+  checkedOfZeroAfterOperation(element);
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
   }
@@ -50,8 +55,29 @@ function enterInResult(event) {
 
 // Функції першої Вкладеності -----------------------------------------------------
 
+function pressZero() {
+  if (findPointInNumb()) {
+    return true;
+  }
+  if (findNumbButZeroInNumb() || enterStr[indexNow] !== "0") {
+    return true;
+  }
+  return false;
+}
+
 function pressDoubleZero() {
-  indexNow += 1;
+  if (checked(enterStr[enterStr.length - 1])) {
+    return false;
+  }
+  if (findPointInNumb()) {
+    indexNow += 1;
+    return true;
+  }
+  if (findNumbButZeroInNumb() || enterStr[indexNow] !== "0") {
+    indexNow += 1;
+    return true;
+  }
+  return false;
 }
 
 function pressPoint() {
@@ -67,40 +93,25 @@ function pressPoint() {
 }
 
 function pressOperation() {
-  if (enterStr[indexNow] === ".") {
-    enterStr = enterStr.split("");
-    enterStr.pop();
-    enterStr = enterStr.join("");
+  if (enterStr[indexNow] === "." || checked(enterStr[indexNow])) {
+    cutLastElem();
     indexNow -= 1;
   }
 }
 
 function pressEquals() {
   let result;
-  let processingStr = enterStr;
-  if (enterStr.includes("×")) {
-    processingStr = processingStr.replace("×", "*");
+  if (checked(enterStr[enterStr.length - 1])) {
+    cutLastElem();
   }
-  if (enterStr.includes("÷")) {
-    processingStr = processingStr.replace("÷", "/");
-  }
+  processingStr = enterStr;
+  changeOperation("×", "*");
+  changeOperation("÷", "/");
+  changeOperation("\u1C7C", "-");
+  console.log(enterStr);
   result = eval(processingStr).toFixed(10);
-  let lineCut;
-  result = result
-    .split("")
-    .reverse()
-    .filter((item) => {
-      if (item !== "0" && item !== ".") {
-        lineCut = "YATTA";
-      }
-      if (item === "." && lineCut !== "YATTA") {
-        lineCut = "YATTA";
-        return false;
-      }
-      return lineCut === "YATTA";
-    })
-    .reverse()
-    .join("");
+  result = redactResult(result);
+  console.log();
   changeEquals();
   root.fieldHistory.innerHTML = enterStr; // вивід історії
   root.fieldResult.innerHTML = result;
@@ -120,16 +131,45 @@ function pressAC() {
   return;
 }
 
+function checkedOfZeroAfterOperation(element) {
+  if (
+    (checked(enterStr[enterStr.length - 2]) || enterStr.length === 1) &&
+    enterStr[enterStr.length - 1] === "0" &&
+    element !== "." &&
+    !checked(element)
+  ) {
+    cutLastElem();
+    indexNow -= 1;
+  }
+}
+
 // Функції другої вкладеності -----------------------------------------------------
 
 function findPointInNumb() {
   for (let i = 1; !checked(enterStr[indexNow - i]); i += 1) {
-    if (indexNow - i === -1) {
-      break;
+    if (indexNow - i <= -1) {
+      return;
     }
     if (enterStr[indexNow - i] === ".") {
       return true;
     }
+  }
+}
+
+function findNumbButZeroInNumb() {
+  for (let i = 1; !checked(enterStr[indexNow - i]); i += 1) {
+    if (indexNow - i <= -1) {
+      return false;
+    }
+    if (enterStr[indexNow - i] !== 0) {
+      return true;
+    }
+  }
+}
+
+function changeOperation(startValue, endValue) {
+  if (enterStr.includes(startValue)) {
+    processingStr = processingStr.replaceAll(startValue, endValue);
   }
 }
 
@@ -141,11 +181,36 @@ function changeEquals() {
   }
 }
 
+function redactResult(result) {
+  let lineCut;
+  return result
+    .split("")
+    .reverse()
+    .filter((item) => {
+      if (item !== "0" && item !== ".") {
+        lineCut = "YATTA";
+      }
+      if (item === "." && lineCut !== "YATTA") {
+        lineCut = "YATTA";
+        return false;
+      }
+      return lineCut === "YATTA";
+    })
+    .reverse()
+    .join("");
+}
+
+function cutLastElem() {
+  enterStr = enterStr.split("");
+  enterStr.pop();
+  enterStr = enterStr.join("");
+}
+
 function checked(elem) {
   switch (elem) {
     case "+":
       return true;
-    case "-":
+    case "\u1C7C":
       return true;
     case "×":
       return true;
