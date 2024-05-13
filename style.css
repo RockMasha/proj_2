@@ -69,7 +69,6 @@ button:hover {
   height: 44px;
   left: 0;
   top: 0;
-  z-index: 3;
   background-color: var(--color-blue-white);
   border-radius: 40px;
   transition: var(--time-tran);
@@ -161,7 +160,7 @@ button:hover {
 }
 
 .head-equals {
-  font-size: 26px;
+  font-size: 26px;                                                      
   font-weight: 600;
   text-align: center;
   color: #373737;

@@ -1,5 +1,4 @@
 let enterStr = "";
-let indexNow = -1;
 let processingStr;
 const root = {
   interfaceEl: document.querySelector(".interface"),
@@ -14,9 +13,6 @@ function enterInResult(event) {
     return;
   }
   const element = event.target?.dataset?.value;
-  if (checked(element) && enterStr === "") {
-    return;
-  }
 
   switch (element) {
     case "AC":
@@ -40,50 +36,82 @@ function enterInResult(event) {
         return;
       }
       break;
+    case ")":
+      if (!pressEndBracket()) {
+        return;
+      }
+      break;
+    case "(":
+      pressStartBracket();
+      break;
   }
-  if (checked(element)) {
+  if (checkedOperation(element)) {
+    if (enterStr === "") {
+      return;
+    }
     pressOperation();
   }
   checkedOfZeroAfterOperation(element);
+  putMultiplicationAfterBracketIfFollowedByNumber(element);
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
   }
-  indexNow += 1;
   enterStr += element;
   root.fieldResult.innerHTML = enterStr;
 }
 
 // Функції першої Вкладеності -----------------------------------------------------
 
+function pressStartBracket() {
+  const lastElem = enterStr[enterStr.length - 1];
+  if (lastElem == Number(lastElem)) {
+    enterStr += "×";
+  }
+  return;
+}
+
+function pressEndBracket() {
+  const countDifferenceBracket = countBracket();
+  if (countDifferenceBracket <= 0) {
+    return false;
+  }
+
+  return true;
+}
+
 function pressZero() {
   if (findPointInNumb()) {
     return true;
   }
-  if (findNumbButZeroInNumb() || enterStr[indexNow] !== "0") {
+  if (
+    findNumbButZeroInNumb() ||
+    (enterStr[enterStr.length - 1] !== "0" && enterStr.length !== 0)
+  ) {
     return true;
   }
   return false;
 }
 
 function pressDoubleZero() {
-  if (checked(enterStr[enterStr.length - 1])) {
+  if (checkedOperation(enterStr[enterStr.length - 1])) {
     return false;
   }
   if (findPointInNumb()) {
-    indexNow += 1;
     return true;
   }
-  if (findNumbButZeroInNumb() || enterStr[indexNow] !== "0") {
-    indexNow += 1;
+  if (
+    findNumbButZeroInNumb() ||
+    (enterStr[enterStr.length - 1] !== "0" && enterStr.length !== 0)
+  ) {
     return true;
   }
   return false;
 }
 
 function pressPoint() {
-  if (checked(enterStr[indexNow]) || enterStr.length === 0) {
+  const lastElem = enterStr[enterStr.length - 1];
+  if (checkedOperation(lastElem) || lastElem === "(" || enterStr.length === 0) {
     enterStr += "0";
-    indexNow += 1;
     return true;
   }
   if (findPointInNumb()) {
@@ -93,37 +121,45 @@ function pressPoint() {
 }
 
 function pressOperation() {
-  if (enterStr[indexNow] === "." || checked(enterStr[indexNow])) {
+  if (
+    enterStr[enterStr.length - 1] === "." ||
+    checkedOperation(enterStr[enterStr.length - 1])
+  ) {
     cutLastElem();
-    indexNow -= 1;
   }
 }
 
 function pressEquals() {
   let result;
-  if (checked(enterStr[enterStr.length - 1])) {
+  if (checkedOperation(enterStr[enterStr.length - 1])) {
     cutLastElem();
+  }
+  const numbNotEnough = countBracket();
+  for (let i = 0; i < numbNotEnough; i++) {
+    enterStr += ")";
   }
   processingStr = enterStr;
   changeOperation("×", "*");
   changeOperation("÷", "/");
   changeOperation("\u1C7C", "-");
-  result = eval(processingStr).toFixed(10);
+  try {
+    result = eval(processingStr).toFixed(10);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
   result = redactResult(result);
-  console.log();
   changeEquals();
   root.fieldHistory.innerHTML = enterStr; // вивід історії
   root.fieldResult.innerHTML = result;
   enterStr = result;
-  indexNow = enterStr.length - 1;
   return;
 }
 
 function pressAC() {
   root.fieldResult.innerHTML = "0";
-  root.fieldHistory.innerHTML = "";
+  root.fieldHistory.innerHTML = ""; // обнулення історії
   enterStr = "";
-  indexNow = -1;
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
   }
@@ -132,35 +168,52 @@ function pressAC() {
 
 function checkedOfZeroAfterOperation(element) {
   if (
-    (checked(enterStr[enterStr.length - 2]) || enterStr.length === 1) &&
+    (checkedOperation(enterStr[enterStr.length - 2]) ||
+      enterStr.length === 1) &&
     enterStr[enterStr.length - 1] === "0" &&
     element !== "." &&
-    !checked(element)
+    !checkedOperation(element)
   ) {
     cutLastElem();
-    indexNow -= 1;
   }
+}
+
+function putMultiplicationAfterBracketIfFollowedByNumber(elem) {
+  if (enterStr[enterStr.length - 1] === ")" && !checkedOperation(elem)) {
+    enterStr += "×";
+  }
+  return;
 }
 
 // Функції другої вкладеності -----------------------------------------------------
 
 function findPointInNumb() {
-  for (let i = 1; !checked(enterStr[indexNow - i]); i += 1) {
-    if (indexNow - i <= -1) {
+  for (
+    let i = 1;
+    !checkedOperation(enterStr[enterStr.length - 1 - i]);
+    i += 1
+  ) {
+    const positionElem = enterStr.length - 1 - i;
+    if (positionElem <= -1) {
       return;
     }
-    if (enterStr[indexNow - i] === ".") {
+    if (enterStr[positionElem] === ".") {
       return true;
     }
   }
 }
 
 function findNumbButZeroInNumb() {
-  for (let i = 1; !checked(enterStr[indexNow - i]); i += 1) {
-    if (indexNow - i <= -1) {
+  for (
+    let i = 1;
+    !checkedOperation(enterStr[enterStr.length - 1 - i]);
+    i += 1
+  ) {
+    const positionElem = enterStr.length - 1 - i;
+    if (positionElem <= -1) {
       return false;
     }
-    if (enterStr[indexNow - i] !== 0) {
+    if (enterStr[positionElem] !== 0) {
       return true;
     }
   }
@@ -178,6 +231,10 @@ function changeEquals() {
   } else {
     root.equals.removeAttribute("hidden");
   }
+}
+
+function countBracket() {
+  return numbSome("(") - numbSome(")");
 }
 
 function redactResult(result) {
@@ -205,7 +262,7 @@ function cutLastElem() {
   enterStr = enterStr.join("");
 }
 
-function checked(elem) {
+function checkedOperation(elem) {
   switch (elem) {
     case "+":
       return true;
@@ -218,4 +275,10 @@ function checked(elem) {
     default:
       return false;
   }
+}
+
+// Функції третьої функції
+
+function numbSome(elem) {
+  return enterStr.split("").filter((item) => item === elem).length;
 }
