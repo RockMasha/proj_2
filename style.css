@@ -8,7 +8,7 @@
   --color-black-gray: #373737;
   --color-blue: #09f;
   --color-shadow: rgba(255, 255, 255, 0.3);
-  --color-black-shadow: #0000000d;
+  --color-black-shadow: #0000000d ;
   --color-absolute-black: #000
 }
 body {
@@ -45,13 +45,9 @@ button:hover {
 .head-theme-light {
   width: 29.737px;
   height: 29.737px;
-}
-.head-theme-night {
-  width: 29.737px;
-  height: 29.737px;
   z-index: 4;
 }
-.head-theme-light {
+.head-theme-night {
   width: 29.737px;
   height: 29.737px;
   z-index: 4;
@@ -86,6 +82,17 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.head-equals[hidden] {
+  overflow: hidden;
+}
+
+.head-equals {
+  font-size: 26px;                                                      
+  font-weight: 600;
+  text-align: center;
+  color: #373737;
 }
 .head-result {
   display: flex;
@@ -137,7 +144,7 @@ button:hover {
   border: 1px solid transparent;
   border-radius: 50px;
 }
-.interface-list_operation > .interface-list-item {
+.interface-list_operation > .interface-list-item {  
   background-color: transparent;
   margin-bottom: 20px;
   box-shadow: 0px 0px 0px 0px transparent;
@@ -153,15 +160,4 @@ button:hover {
   margin-bottom: 0;
   background-color: var(--color-light-white);
   box-shadow: 0px 3px 15px 0px var(--color-black-shadow);
-}
-
-.head-equals[hidden] {
-  overflow: hidden;
-}
-
-.head-equals {
-  font-size: 26px;                                                      
-  font-weight: 600;
-  text-align: center;
-  color: #373737;
 }

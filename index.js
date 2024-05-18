@@ -16,43 +16,57 @@ function enterInResult(event) {
 
   switch (element) {
     case "AC":
-      pressAC();
+      resetEnter();
       return;
     case "=":
-      pressEquals();
+      TakeAnswer();
       return;
     case ".":
-      if (pressPoint()) {
+      if (ifNeedPutZeroBeforePoint()) {
+        enterStr += "0";
         break;
       }
-      return;
+      if (isPointInNumb()) {
+        return;
+      }
+      break;
     case "00":
-      if (pressDoubleZero()) {
+      if (ifCanPressDoubleZero()) {
         break;
       }
       return;
     case "0":
-      if (!pressZero()) {
-        return;
+      if (ifCanPressZero()) {
+        break;
       }
-      break;
-    case ")":
-      if (!pressEndBracket()) {
-        return;
-      }
-      break;
-    case "(":
-      pressStartBracket();
-      break;
-  }
-  if (checkedOperation(element)) {
-    if (enterStr === "") {
       return;
-    }
-    pressOperation();
+    case ")":
+      if (ifCanPressEndBracket()) {
+        break;
+      }
+      return;
+    case "(":
+      ifNeedPutMultiplicationBeforeStartBracket();
+      break;
+    case "+":
+    case "\u1C7C":
+    case "×":
+    case "÷":
+      if (IfCanPressOperation(element)) {
+        break;
+      }
+      return;
   }
-  checkedOfZeroAfterOperation(element);
-  putMultiplicationAfterBracketIfFollowedByNumber(element);
+  ifLastElemInNumbIsPoint(element);
+  if (!(enterStr[enterStr.length - 1] !== ")" || element === ")")) {
+    putMultiplicationAfterEndBracket(element);
+  }
+  if (
+    checkedOperation(enterStr[enterStr.length - 2]) &&
+    enterStr[enterStr.length - 1] === "0"
+  ) {
+    cutLastElem();
+  }
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
   }
@@ -62,7 +76,24 @@ function enterInResult(event) {
 
 // Функції першої Вкладеності -----------------------------------------------------
 
-function pressStartBracket() {
+function IfCanPressOperation(elem) {
+  if (enterStr === "") {
+    return false;
+  }
+  const lastElem = enterStr[enterStr.length - 1];
+  if (
+    (lastElem === "(" && elem !== "\u1C7C") ||
+    (enterStr[enterStr.length - 2] === "(" && elem !== "\u1C7C")
+  ) {
+    return false;
+  }
+  if (checkedOperation(lastElem)) {
+    cutLastElem();
+  }
+  return true;
+}
+
+function ifNeedPutMultiplicationBeforeStartBracket() {
   const lastElem = enterStr[enterStr.length - 1];
   if (lastElem == Number(lastElem)) {
     enterStr += "×";
@@ -70,20 +101,17 @@ function pressStartBracket() {
   return;
 }
 
-function pressEndBracket() {
+function ifCanPressEndBracket() {
   const countDifferenceBracket = countBracket();
   if (countDifferenceBracket <= 0) {
     return false;
   }
-
   return true;
 }
 
-function pressZero() {
-  if (findPointInNumb()) {
-    return true;
-  }
+function ifCanPressZero() {
   if (
+    isPointInNumb() ||
     findNumbButZeroInNumb() ||
     (enterStr[enterStr.length - 1] !== "0" && enterStr.length !== 0)
   ) {
@@ -92,44 +120,28 @@ function pressZero() {
   return false;
 }
 
-function pressDoubleZero() {
-  if (checkedOperation(enterStr[enterStr.length - 1])) {
-    return false;
-  }
-  if (findPointInNumb()) {
-    return true;
-  }
-  if (
-    findNumbButZeroInNumb() ||
-    (enterStr[enterStr.length - 1] !== "0" && enterStr.length !== 0)
-  ) {
-    return true;
-  }
-  return false;
-}
-
-function pressPoint() {
+function ifCanPressDoubleZero() {
   const lastElem = enterStr[enterStr.length - 1];
-  if (checkedOperation(lastElem) || lastElem === "(" || enterStr.length === 0) {
-    enterStr += "0";
+  if (
+    !checkedOperation(lastElem) &&
+    !isBracket(lastElem) &&
+    (isPointInNumb() ||
+      findNumbButZeroInNumb() ||
+      (lastElem !== "0" && enterStr.length !== 0))
+  ) {
     return true;
   }
-  if (findPointInNumb()) {
-    return false;
-  }
-  return true;
+  return false;
 }
 
-function pressOperation() {
-  if (
-    enterStr[enterStr.length - 1] === "." ||
-    checkedOperation(enterStr[enterStr.length - 1])
-  ) {
-    cutLastElem();
-  }
+function ifNeedPutZeroBeforePoint() {
+  const lastElem = enterStr[enterStr.length - 1];
+  return (
+    checkedOperation(lastElem) || lastElem === "(" || enterStr.length === 0
+  );
 }
 
-function pressEquals() {
+function TakeAnswer() {
   let result;
   if (checkedOperation(enterStr[enterStr.length - 1])) {
     cutLastElem();
@@ -143,7 +155,7 @@ function pressEquals() {
   changeOperation("÷", "/");
   changeOperation("\u1C7C", "-");
   try {
-    result = eval(processingStr).toFixed(10);
+    result = eval(processingStr).toFixed(9);
   } catch (error) {
     console.log(error);
     return;
@@ -156,7 +168,7 @@ function pressEquals() {
   return;
 }
 
-function pressAC() {
+function resetEnter() {
   root.fieldResult.innerHTML = "0";
   root.fieldHistory.innerHTML = ""; // обнулення історії
   enterStr = "";
@@ -165,37 +177,36 @@ function pressAC() {
   }
   return;
 }
-
-function checkedOfZeroAfterOperation(element) {
+function ifLastElemInNumbIsPoint(element) {
   if (
-    (checkedOperation(enterStr[enterStr.length - 2]) ||
-      enterStr.length === 1) &&
-    enterStr[enterStr.length - 1] === "0" &&
+    enterStr[enterStr.length - 1] === "." &&
     element !== "." &&
-    !checkedOperation(element)
+    (isBracket(element) || checkedOperation(element) || enterStr.length === 1)
   ) {
     cutLastElem();
+    if (isBracket(element)) {
+      enterStr += "×";
+    }
   }
 }
 
-function putMultiplicationAfterBracketIfFollowedByNumber(elem) {
-  if (enterStr[enterStr.length - 1] === ")" && !checkedOperation(elem)) {
+function putMultiplicationAfterEndBracket(elem) {
+  if (!checkedOperation(elem)) {
     enterStr += "×";
+  }
+  if (elem === ".") {
+    enterStr += "0";
   }
   return;
 }
 
 // Функції другої вкладеності -----------------------------------------------------
 
-function findPointInNumb() {
-  for (
-    let i = 1;
-    !checkedOperation(enterStr[enterStr.length - 1 - i]);
-    i += 1
-  ) {
+function isPointInNumb() {
+  for (let i = 0; ; i += 1) {
     const positionElem = enterStr.length - 1 - i;
-    if (positionElem <= -1) {
-      return;
+    if (positionElem <= -1 || checkedOperation(enterStr[positionElem])) {
+      return false;
     }
     if (enterStr[positionElem] === ".") {
       return true;
@@ -204,16 +215,16 @@ function findPointInNumb() {
 }
 
 function findNumbButZeroInNumb() {
-  for (
-    let i = 1;
-    !checkedOperation(enterStr[enterStr.length - 1 - i]);
-    i += 1
-  ) {
+  for (let i = 0; ; i += 1) {
     const positionElem = enterStr.length - 1 - i;
-    if (positionElem <= -1) {
+    if (
+      !Boolean(positionElem + 1) ||
+      checkedOperation(enterStr[positionElem]) ||
+      isBracket(enterStr[positionElem])
+    ) {
       return false;
     }
-    if (enterStr[positionElem] !== 0) {
+    if (enterStr[positionElem] !== "0") {
       return true;
     }
   }
@@ -262,6 +273,14 @@ function cutLastElem() {
   enterStr = enterStr.join("");
 }
 
+// Функції третьої порядку
+
+function numbSome(elem) {
+  return enterStr.split("").filter((item) => item === elem).length;
+}
+
+// Універсальні
+
 function checkedOperation(elem) {
   switch (elem) {
     case "+":
@@ -277,8 +296,13 @@ function checkedOperation(elem) {
   }
 }
 
-// Функції третьої функції
-
-function numbSome(elem) {
-  return enterStr.split("").filter((item) => item === elem).length;
+function isBracket(elem) {
+  switch (elem) {
+    case "(":
+      return true;
+    case ")":
+      return true;
+    default:
+      return false;
+  }
 }
