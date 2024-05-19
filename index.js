@@ -62,7 +62,8 @@ function enterInResult(event) {
     putMultiplicationAfterEndBracket(element);
   }
   if (
-    checkedOperation(enterStr[enterStr.length - 2]) &&
+    (checkedOperation(enterStr[enterStr.length - 2]) ||
+      isBracket(enterStr[enterStr.length - 2])) &&
     enterStr[enterStr.length - 1] === "0"
   ) {
     cutLastElem();
