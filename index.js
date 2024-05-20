@@ -14,7 +14,7 @@ function enterInResult(event) {
     return;
   }
   const element = event.target?.dataset?.value;
-
+  console.log(element);
   switch (element) {
     case "AC":
       resetEnter();
@@ -314,24 +314,21 @@ function isBracket(elem) {
 // Віка
 
 const cssVariableEl = document.querySelector(":root")
-  const sss = document.querySelector("body")
 root.checkInput.addEventListener('change', changeTheme)
-
 function changeTheme() {
   if(root.checkInput.checked){
-    light()
-  } else {
     night()
+  } else {
+    light()
   }
 
 }
-
-
 function light() {
-  
+  cssVariableEl.style.setProperty("--color-absolute-black", "#000")
+  cssVariableEl.style.setProperty("--color-shadow", "rgba(255, 255, 255, 0.3)")
 }
 
 function night() {
-  console.log(1);
-  sss.setProperty("--color-absolute-black", "#f00")
+  cssVariableEl.style.setProperty("--color-absolute-black", "#555") // приклад
+  cssVariableEl.style.setProperty("--color-shadow", "#05131B")
 }
