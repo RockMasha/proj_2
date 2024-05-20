@@ -12,11 +12,12 @@
   --color-absolute-black: #000
 }
 body {
+  --color-black-shadow: #0000000d ;
   font-family: Poppins;
   background-color:  var(--color-absolute-black);
 }
 button:hover {
-  box-shadow: 0px 3px 20px 0px var(--color-blue);
+  --color-absolute-black: #000;
   transition: 0.1s;
 }
 .head {

@@ -6,6 +6,7 @@ const root = {
   fieldHistory: document.querySelector(".head-history"),
   BoxForResult: document.querySelector(".head-flex_box"),
   equals: document.querySelector(".head-equals"),
+  checkInput: document.querySelector(".head-theme-change")
 };
 root.interfaceEl.addEventListener("click", enterInResult);
 function enterInResult(event) {
@@ -84,7 +85,7 @@ function IfCanPressOperation(elem) {
   const lastElem = enterStr[enterStr.length - 1];
   if (
     (lastElem === "(" && elem !== "\u1C7C") ||
-    (enterStr[enterStr.length - 2] === "(" && elem !== "\u1C7C")
+    (enterStr[enterStr.length - 2] === "(" && elem !== "\u1C7C" && lastElem != Number(lastElem))
   ) {
     return false;
   }
@@ -306,4 +307,31 @@ function isBracket(elem) {
     default:
       return false;
   }
+}
+
+
+
+// Віка
+
+const cssVariableEl = document.querySelector(":root")
+  const sss = document.querySelector("body")
+root.checkInput.addEventListener('change', changeTheme)
+
+function changeTheme() {
+  if(root.checkInput.checked){
+    light()
+  } else {
+    night()
+  }
+
+}
+
+
+function light() {
+  
+}
+
+function night() {
+  console.log(1);
+  sss.setProperty("--color-absolute-black", "#f00")
 }
