@@ -6,15 +6,18 @@ const root = {
   fieldHistory: document.querySelector(".head-history"),
   BoxForResult: document.querySelector(".head-flex_box"),
   equals: document.querySelector(".head-equals"),
-  checkInput: document.querySelector(".head-theme-change")
+  checkInput: document.querySelector(".head-theme-change"),
 };
 root.interfaceEl.addEventListener("click", enterInResult);
 function enterInResult(event) {
   if (!event.target.classList.contains("interface-list-item-btn")) {
     return;
   }
+  if (root.fieldResult.classList.contains("red")) {
+    root.fieldResult.classList.remove("red");
+    resetEnter();
+  }
   const element = event.target?.dataset?.value;
-  console.log(element);
   switch (element) {
     case "AC":
       resetEnter();
@@ -65,7 +68,8 @@ function enterInResult(event) {
   if (
     (checkedOperation(enterStr[enterStr.length - 2]) ||
       isBracket(enterStr[enterStr.length - 2])) &&
-    enterStr[enterStr.length - 1] === "0"
+    enterStr[enterStr.length - 1] === "0" &&
+    element !== "."
   ) {
     cutLastElem();
   }
@@ -76,16 +80,20 @@ function enterInResult(event) {
   root.fieldResult.innerHTML = enterStr;
 }
 
-// Функції першої Вкладеності -----------------------------------------------------
-
 function IfCanPressOperation(elem) {
-  if (enterStr === "") {
-    return false;
-  }
   const lastElem = enterStr[enterStr.length - 1];
   if (
+    (enterStr === "" && elem !== "\u1C7C") ||
+    (enterStr.length === 1 && lastElem != Number(lastElem))
+  ) {
+    return false;
+  }
+
+  if (
     (lastElem === "(" && elem !== "\u1C7C") ||
-    (enterStr[enterStr.length - 2] === "(" && elem !== "\u1C7C" && lastElem != Number(lastElem))
+    (enterStr[enterStr.length - 2] === "(" &&
+      elem !== "\u1C7C" &&
+      lastElem != Number(lastElem))
   ) {
     return false;
   }
@@ -156,15 +164,19 @@ function TakeAnswer() {
   changeOperation("×", "*");
   changeOperation("÷", "/");
   changeOperation("\u1C7C", "-");
+  if (processingStr.includes("/0")) {
+    error();
+    return;
+  }
   try {
     result = eval(processingStr).toFixed(9);
-  } catch (error) {
-    console.log(error);
+  } catch {
+    error();
     return;
   }
   result = redactResult(result);
   changeEquals();
-  root.fieldHistory.innerHTML = enterStr; // вивід історії
+  root.fieldHistory.innerHTML = enterStr;
   root.fieldResult.innerHTML = result;
   enterStr = result;
   return;
@@ -172,7 +184,7 @@ function TakeAnswer() {
 
 function resetEnter() {
   root.fieldResult.innerHTML = "0";
-  root.fieldHistory.innerHTML = ""; // обнулення історії
+  root.fieldHistory.innerHTML = "";
   enterStr = "";
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
@@ -201,8 +213,6 @@ function putMultiplicationAfterEndBracket(elem) {
   }
   return;
 }
-
-// Функції другої вкладеності -----------------------------------------------------
 
 function isPointInNumb() {
   for (let i = 0; ; i += 1) {
@@ -275,13 +285,9 @@ function cutLastElem() {
   enterStr = enterStr.join("");
 }
 
-// Функції третьої порядку
-
 function numbSome(elem) {
   return enterStr.split("").filter((item) => item === elem).length;
 }
-
-// Універсальні
 
 function checkedOperation(elem) {
   switch (elem) {
@@ -309,26 +315,65 @@ function isBracket(elem) {
   }
 }
 
-
-
-// Віка
-
-const cssVariableEl = document.querySelector(":root")
-root.checkInput.addEventListener('change', changeTheme)
+const cssVariableEl = document.querySelector(":root");
+root.checkInput.addEventListener("change", changeTheme);
 function changeTheme() {
-  if(root.checkInput.checked){
-    night()
+  if (root.checkInput.checked) {
+    night();
   } else {
-    light()
+    light();
   }
-
 }
+
+function error() {
+  root.fieldResult.classList.add("red");
+  root.fieldResult.innerHTML = "ERROR";
+  root.fieldHistory.innerHTML = "";
+  enterStr = "";
+}
+
+root.fieldHistory.addEventListener("click", enterHistory);
+function enterHistory() {
+  if (root.fieldHistory.innerHTML === "") {
+    return;
+  }
+  enterStr = root.fieldHistory.innerHTML;
+  root.fieldResult.innerHTML = root.fieldHistory.innerHTML;
+  root.fieldHistory.innerHTML = "";
+}
+
 function light() {
-  cssVariableEl.style.setProperty("--color-absolute-black", "#000")
-  cssVariableEl.style.setProperty("--color-shadow", "rgba(255, 255, 255, 0.3)")
+  cssVariableEl.style.setProperty("--color-body", "#000");
+  cssVariableEl.style.setProperty("--color-calc", "#fefefe");
+  cssVariableEl.style.setProperty("--color-theme", "#a9dcfd");
+  cssVariableEl.style.setProperty("--color-sun", "#373737");
+  cssVariableEl.style.setProperty("--color-night", "#7b9aae");
+  cssVariableEl.style.setProperty("--color-check_span", "#cbeafe");
+  cssVariableEl.style.setProperty("--color-history", "rgba(55, 55, 55, 0.5)");
+  cssVariableEl.style.setProperty("--color-result", "#373737");
+  cssVariableEl.style.setProperty("--color-interface", "#a9dcfd");
+  cssVariableEl.style.setProperty("--color-item", "#CBEAFE");
+  cssVariableEl.style.setProperty("--color-item-text", "#373737");
+  cssVariableEl.style.setProperty("--color-list_operation", "#CBEAFE");
+  cssVariableEl.style.setProperty("--color-equals", "rgba(255, 255, 255, 0.3)");
+  cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
+  cssVariableEl.style.setProperty("--color-blue", "#09f");
 }
 
 function night() {
-  cssVariableEl.style.setProperty("--color-absolute-black", "#555") // приклад
-  cssVariableEl.style.setProperty("--color-shadow", "#05131B")
+  cssVariableEl.style.setProperty("--color-body", "#907");
+  cssVariableEl.style.setProperty("--color-calc", "#121212");
+  cssVariableEl.style.setProperty("--color-theme", "#1B6A9C");
+  cssVariableEl.style.setProperty("--color-sun", "#74A4C2");
+  cssVariableEl.style.setProperty("--color-night", "##C9D3DC");
+  cssVariableEl.style.setProperty("--color-check_span", "#003661");
+  cssVariableEl.style.setProperty("--color-history", "#868686");
+  cssVariableEl.style.setProperty("--color-result", "#F9F9F9");
+  cssVariableEl.style.setProperty("--color-interface", "#031925");
+  cssVariableEl.style.setProperty("--color-item", "#04131C");
+  cssVariableEl.style.setProperty("--color-item-text", "#FBFBFB");
+  cssVariableEl.style.setProperty("--color-list_operation", "#04131C");
+  cssVariableEl.style.setProperty("--color-equals", "#041017");
+  cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
+  cssVariableEl.style.setProperty("--color-blue", "#003661");
 }
