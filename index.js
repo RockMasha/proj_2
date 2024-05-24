@@ -315,16 +315,6 @@ function isBracket(elem) {
   }
 }
 
-const cssVariableEl = document.querySelector(":root");
-root.checkInput.addEventListener("change", changeTheme);
-function changeTheme() {
-  if (root.checkInput.checked) {
-    night();
-  } else {
-    light();
-  }
-}
-
 function error() {
   root.fieldResult.classList.add("red");
   root.fieldResult.innerHTML = "ERROR";
@@ -340,6 +330,16 @@ function enterHistory() {
   enterStr = root.fieldHistory.innerHTML;
   root.fieldResult.innerHTML = root.fieldHistory.innerHTML;
   root.fieldHistory.innerHTML = "";
+}
+
+const cssVariableEl = document.querySelector(":root");
+root.checkInput.addEventListener("change", changeTheme);
+function changeTheme() {
+  if (root.checkInput.checked) {
+    night();
+  } else {
+    light();
+  }
 }
 
 function light() {
