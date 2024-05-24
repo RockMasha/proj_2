@@ -77,7 +77,7 @@ function enterInResult(event) {
     changeEquals();
   }
   enterStr += element;
-  root.fieldResult.innerHTML = enterStr;
+  root.fieldResult.textContent = enterStr;
 }
 
 function IfCanPressOperation(elem) {
@@ -176,15 +176,15 @@ function TakeAnswer() {
   }
   result = redactResult(result);
   changeEquals();
-  root.fieldHistory.innerHTML = enterStr;
-  root.fieldResult.innerHTML = result;
+  root.fieldHistory.textContent = enterStr;
+  root.fieldResult.textContent = result;
   enterStr = result;
   return;
 }
 
 function resetEnter() {
-  root.fieldResult.innerHTML = "0";
-  root.fieldHistory.innerHTML = "";
+  root.fieldResult.textContent = "0";
+  root.fieldHistory.textContent = "";
   enterStr = "";
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
@@ -317,19 +317,19 @@ function isBracket(elem) {
 
 function error() {
   root.fieldResult.classList.add("red");
-  root.fieldResult.innerHTML = "ERROR";
-  root.fieldHistory.innerHTML = "";
+  root.fieldResult.textContent = "ERROR";
+  root.fieldHistory.textContent = "";
   enterStr = "";
 }
 
 root.fieldHistory.addEventListener("click", enterHistory);
 function enterHistory() {
-  if (root.fieldHistory.innerHTML === "") {
+  if (root.fieldHistory.textContent === "") {
     return;
   }
-  enterStr = root.fieldHistory.innerHTML;
-  root.fieldResult.innerHTML = root.fieldHistory.innerHTML;
-  root.fieldHistory.innerHTML = "";
+  enterStr = root.fieldHistory.textContent;
+  root.fieldResult.textContent = root.fieldHistory.textContent;
+  root.fieldHistory.textContent = "";
 }
 
 const cssVariableEl = document.querySelector(":root");
@@ -377,3 +377,5 @@ function night() {
   cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
   cssVariableEl.style.setProperty("--color-blue", "#003661");
 }
+
+
