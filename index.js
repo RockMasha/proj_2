@@ -343,7 +343,7 @@ function changeTheme() {
 }
 
 function light() {
-  cssVariableEl.style.setProperty("--color-body", "#000");
+  cssVariableEl.style.setProperty("--color-body", "#F66");
   cssVariableEl.style.setProperty("--color-calc", "#fefefe");
   cssVariableEl.style.setProperty("--color-theme", "#a9dcfd");
   cssVariableEl.style.setProperty("--color-sun", "#373737");
