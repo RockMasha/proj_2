@@ -61,17 +61,19 @@ function enterInResult(event) {
       }
       return;
   }
-  ifLastElemInNumbIsPoint(element);
-  if (!(enterStr[enterStr.length - 1] !== ")" || element === ")")) {
-    putMultiplicationAfterEndBracket(element);
-  }
   if (
     (checkedOperation(enterStr[enterStr.length - 2]) ||
       isBracket(enterStr[enterStr.length - 2])) &&
     enterStr[enterStr.length - 1] === "0" &&
-    element !== "."
+    element !== "." &&
+    !checkedOperation(element) &&
+    !isBracket(element)
   ) {
     cutLastElem();
+  }
+  ifLastElemInNumbIsPoint(element);
+  if (!(enterStr[enterStr.length - 1] !== ")" || element === ")")) {
+    putMultiplicationAfterEndBracket(element);
   }
   if (!root.equals.hasAttribute("hidden")) {
     changeEquals();
@@ -164,18 +166,21 @@ function TakeAnswer() {
   changeOperation("×", "*");
   changeOperation("÷", "/");
   changeOperation("\u1C7C", "-");
-  if (processingStr.includes("/0")) {
-    error();
-    return;
-  }
   try {
     result = eval(processingStr).toFixed(9);
   } catch {
     error();
     return;
   }
-  result = redactResult(result);
   changeEquals();
+  if (result == String(Infinity) || isNaN(result)) {
+    error();
+    root.fieldHistory.textContent = "";
+    root.fieldResult.textContent = "infinity love isorika";
+    enterStr = "";
+    return;
+  }
+  result = redactResult(result);
   root.fieldHistory.textContent = enterStr;
   root.fieldResult.textContent = result;
   enterStr = result;
@@ -198,7 +203,7 @@ function ifLastElemInNumbIsPoint(element) {
     (isBracket(element) || checkedOperation(element) || enterStr.length === 1)
   ) {
     cutLastElem();
-    if (isBracket(element)) {
+    if (element === "(") {
       enterStr += "×";
     }
   }
@@ -377,5 +382,3 @@ function night() {
   cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
   cssVariableEl.style.setProperty("--color-blue", "#003661");
 }
-
-
