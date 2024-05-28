@@ -85,12 +85,12 @@ function enterInResult(event) {
 function IfCanPressOperation(elem) {
   const lastElem = enterStr[enterStr.length - 1];
   if (
-    (enterStr === "" && elem !== "\u1C7C") ||
-    (enterStr.length === 1 && lastElem != Number(lastElem))
+    ((enterStr === "" && elem !== "\u1C7C") ||
+      (enterStr.length === 1 && lastElem != Number(lastElem))) &&
+    lastElem !== "("
   ) {
     return false;
   }
-
   if (
     (lastElem === "(" && elem !== "\u1C7C") ||
     (enterStr[enterStr.length - 2] === "(" &&
@@ -154,6 +154,9 @@ function ifNeedPutZeroBeforePoint() {
 }
 
 function TakeAnswer() {
+  if (enterStr === "") {
+    return;
+  }
   let result;
   if (checkedOperation(enterStr[enterStr.length - 1])) {
     cutLastElem();
@@ -173,7 +176,7 @@ function TakeAnswer() {
     return;
   }
   changeEquals();
-  if (result == String(Infinity) || isNaN(result)) {
+  if (isInfinity(result) || isNaN(result)) {
     error();
     return;
   }
@@ -317,6 +320,17 @@ function isBracket(elem) {
   }
 }
 
+function isInfinity(elem) {
+  switch (elem) {
+    case String(Infinity):
+      return true;
+    case String(-Infinity):
+      return true;
+    default:
+      return false;
+  }
+}
+
 function error() {
   root.fieldResult.classList.add("red");
   root.fieldResult.textContent = "ERROR";
@@ -379,5 +393,3 @@ function night() {
   cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
   cssVariableEl.style.setProperty("--color-blue", "#003661");
 }
-
-
