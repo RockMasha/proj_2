@@ -175,9 +175,6 @@ function TakeAnswer() {
   changeEquals();
   if (result == String(Infinity) || isNaN(result)) {
     error();
-    root.fieldHistory.textContent = "";
-    root.fieldResult.textContent = "infinity love isorika";
-    enterStr = "";
     return;
   }
   result = redactResult(result);
@@ -382,3 +379,5 @@ function night() {
   cssVariableEl.style.setProperty("--color-black-shadow", "#0000000d");
   cssVariableEl.style.setProperty("--color-blue", "#003661");
 }
+
+
